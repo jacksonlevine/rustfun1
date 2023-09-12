@@ -22,10 +22,10 @@ fn main() {
     closure_map.insert("add".to_string(), add_closure);
 
 
-    let args2 = vec!["10".to_string(), "5".to_string()];
-    let result = closure_map["add"](args2);
+    //let args2 = vec!["10".to_string(), "5".to_string()];
+   // let result = closure_map["add"](args2);
 
-    println!("Add result: {}", result);
+  //  println!("Add result: {}", result);
 
 
 
@@ -38,14 +38,20 @@ fn main() {
         let reader = BufReader::new(file);
 
         // Iterate over each line in the file
-        for line in reader.lines() {
+        for (index, line) in reader.lines().enumerate() {
             if let Ok(line) = line {
                 // Split the line into words by whitespace
-                let words: Vec<&str> = line.split_whitespace().collect();
+                let mut words: Vec<String> = line
+                    .split_whitespace()
+                    .map(|word| word.to_string())
+                    .collect();
 
-                // Process each word
-                for word in words {
-                    println!("Word: {}", word);
+                if let Some(first_word) = words.get(0).cloned() {
+                    let result: i32 = closure_map[&first_word](words.clone());
+                    println!("Line {} Result: {}", index, result);
+                    words.remove(0);
+                } else {
+                    println!("Line {} is broken!", index);
                 }
             }
         }
